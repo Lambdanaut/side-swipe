@@ -104,7 +104,7 @@ func set_path(target):
     
 func run_ai():
     if current_state == States.FOLLOW:
-        if is_on_floor() and position.distance_to(next_path_node[0]*16) > 32:
+        if is_on_floor() and position.distance_to(next_path_node[0]*16) > 28:
             set_path(path_goal_node)
             
         var arrived_to_next_point = move_to(next_path_node)
