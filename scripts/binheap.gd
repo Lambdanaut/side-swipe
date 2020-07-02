@@ -54,5 +54,16 @@ func pop():
     percDown(1)
     return retval
 
+func contains(val):
+    var skip_first = true
+    
+    for item in heaplist:
+        if skip_first:
+            skip_first = false
+            continue
+        if item[1] == val:
+            return true
+    return false
+
 func is_empty():
     return currentSize < 1
