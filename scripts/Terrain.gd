@@ -50,9 +50,11 @@ func pathfinding(start, goal, jump_limit=INF, grid=null):
             var total_path = [[Vector2(current_node_3D.x, current_node_3D.y), current_node_jump]]
             
             var came_from_keys = came_from.keys()
+            
             while current_node_3D in came_from_keys:
                 current = came_from[current_node_3D]
                 current_node_3D = current[0]
+                
                 var to_return = [Vector2(current_node_3D.x, current_node_3D.y), current[1]]
                 total_path.insert(0, to_return)
             
@@ -84,7 +86,7 @@ func pathfinding(start, goal, jump_limit=INF, grid=null):
             
             # d(current,neighbor) is the weight of the edge from current to neighbor
             # tentative_gScore is the distance from start to the neighbor through current
-            var tentative_g_score = g_scores[current_node_3D] + pathfinding_tile_move_cost(current_node_2D, neighbor_node_2D)
+            var tentative_g_score = g_scores[current_node_3D] + pathfinding_tile_move_cost(current_node_3D, neighbor_node_3D)
             
             var neighbors_g_score = g_scores.get(neighbor_node_3D, INF)
             if tentative_g_score < neighbors_g_score:
@@ -103,7 +105,7 @@ func pathfinding(start, goal, jump_limit=INF, grid=null):
     # Open set is empty but goal was never reached
     return []
 
-func pathfinding_tile_move_cost(current_node, neighbor):
+func pathfinding_tile_move_cost(from_node_3D, to_node_3D):
     return 1
 
 func get_neighbors(n: Vector2, current_jump, grid, jump_limit):
@@ -115,14 +117,16 @@ func get_neighbors(n: Vector2, current_jump, grid, jump_limit):
     
     var next_vertical_jump_val = current_jump + 1 + (1 if current_jump % 2 == 0 else 0)
     
-    var down = [Vector2(n.x, n.y+1), next_vertical_jump_val]
+    var down = [Vector2(n.x, n.y+1), max(jump_limit, next_vertical_jump_val)]
     neighbors.append(down)
     
     if current_jump < jump_limit:
         var up = [Vector2(n.x, n.y-1), next_vertical_jump_val]
         neighbors.append(up)
+        
+    var fall_increment = 2 if current_jump < jump_limit * 1.6 else 4
     
-    if current_jump % 2 == 0:
+    if current_jump % fall_increment == 0:
         var left = [Vector2(n.x-1, n.y), 0]
         var bottom_left = Vector2(n.x-1, n.y+1)
         if bottom_left in grid:
